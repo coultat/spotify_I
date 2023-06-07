@@ -25,7 +25,5 @@ class Artist(BaseModel):
     popularity: int
     artist_type: str = Field(alias='type')
     uri: str
-
-
     class Config:
         allow_population_by_field_name = True
