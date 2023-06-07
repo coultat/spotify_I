@@ -16,12 +16,16 @@ class Images(BaseModel):
 
 class Artist(BaseModel):
     external_urls: Dict[str, str]
-    followers: Followers
+    followers: Optional[Followers]
     genres: List[str]
     href: str
     spotify_artist_id: str = Field(alias="id")
     images: List[Images]
     name: str
     popularity: int
-    type: str
+    artist_type: str = Field(alias='type')
     uri: str
+
+
+    class Config:
+        allow_population_by_field_name = True
