@@ -2,7 +2,7 @@ import requests
 
 
 class SpotifyTierI:
-    def __init__(self, client_id, client_secret):
+    def __init__(self, client_id: str, client_secret: str):
         data = f"grant_type=client_credentials&client_id={client_id}" \
                f"&client_secret={client_secret}"
         headers = {"Content-Type": "application/x-www-form-urlencoded"}

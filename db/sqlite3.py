@@ -3,6 +3,8 @@ from typing import Generator, Dict
 import sqlite3
 from contextlib import closing
 
+from spotify_I.models.models import Artist
+
 
 class SpotifySqlite3:
     def __init__(self, db_name: str):
@@ -34,7 +36,7 @@ class SpotifySqlite3:
         self.cursor.execute("DROP TABLE images")
         self.cursor.execute("DROP TABLE followers")
 
-    def get_artist_by_id(self, artist_id: str) -> Generator:
+    def get_artist_by_id(self, artist_id: str) -> Artist:
         query = """
                 SELECT *
                 FROM artists
@@ -45,7 +47,7 @@ class SpotifySqlite3:
         result = self.cursor.fetchall()
         return result
 
-    def insert_artist_to_db(self, artist: Generator):
+    def insert_artist_to_db(self, artist: Artist):
         query = """
                 INSERT INTO artists
                 (genres, href, spotify_artist_id, name, popularity, artist_type, uri)
@@ -64,7 +66,7 @@ class SpotifySqlite3:
             last_id = cursor.lastrowid
         return last_id
 
-    def insert_images_to_db(self, artist: Generator):
+    def insert_images_to_db(self, artist: Artist):
         query = """
                 INSERT INTO images
                 (spotify_artist_id, height, url, width)
@@ -76,7 +78,7 @@ class SpotifySqlite3:
                 cursor.execute(query, args_input)
                 self.connection.commit()
 
-    def insert_followers_into_db(self, artist: Generator):
+    def insert_followers_into_db(self, artist: Artist):
         query = """
                 INSERT INTO followers
                 (spotify_artist_id, href, total)
@@ -88,7 +90,7 @@ class SpotifySqlite3:
             cursor.execute(query, args_input)
             self.connection.commit()
 
-    def update_artist_name(self, new_name, spotify_artist_id)-> Dict[str, str]:
+    def update_artist_name(self, new_name: str, spotify_artist_id: str) -> Dict[str, str]:
         query = """
                 UPDATE artists
                 SET name = ?
@@ -99,7 +101,7 @@ class SpotifySqlite3:
         self.connection.commit()
         return {'message': f'artist name sucessfully changed to {new_name}'}
 
-    def update_artist(self, artist: Generator, spotify_artist_id: str)-> Dict[str, str]:
+    def update_artist(self, artist: Artist, spotify_artist_id: str) -> Dict[str, str]:
         query = """
                 UPDATE artists
                 SET genres = ?, 

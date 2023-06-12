@@ -238,5 +238,3 @@ def test_delete_artist(client):
     del_result = client.delete('/db')
     assert del_result.status_code == 200
     assert del_result.json['message'] == 'tables from the db dropped'
-
-# Todo populate the db and check if is correctly done

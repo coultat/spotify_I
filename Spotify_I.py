@@ -2,11 +2,12 @@ from typing import Dict
 
 from flask import Flask, request
 
-from models.models import Artist
-from external_apis.spotify_api import SpotifyTierI
+from credentials.spotify_credentials import credentials
 from db.sqlite3 import SpotifySqlite3
+from external_apis.spotify_api import SpotifyTierI
+from models.models import Artist
 
-# Todo -> type hint
+
 DB_NAME = '../../tier1.db'
 
 def create_app():
@@ -20,15 +21,14 @@ def create_app():
 
     @app.route("/spotify/artist/<spotify_artist_id>", methods=['GET'])
     def get_artist_spotify_by_id(spotify_artist_id: str) -> Artist:
-        return SpotifyTierI(client_id='e71369f30b614d7b90d2164bc279397d', client_secret='eef48fe4d2e74ca8809f0c218beae7e0').get_artist_by_id(spotify_artist_id)  # Todo change how to send the client_od and client_secret
+        return SpotifyTierI(credentials['client_id'], credentials['client_secret']).get_artist_by_id(spotify_artist_id)
 
     @app.route("/db/artist/<spotify_artist_id>", methods=['POST'])
     def insert_artist_into_db_by_spotify_id(spotify_artist_id: str) -> Dict[str, str]:
         artist_db = SpotifySqlite3(DB_NAME).get_artist_by_id(spotify_artist_id)
         if artist_db:
             return {'message': f'The artist with the id {spotify_artist_id} was already in the db'}
-        result = SpotifyTierI(client_id='e71369f30b614d7b90d2164bc279397d',
-                              client_secret='eef48fe4d2e74ca8809f0c218beae7e0').get_artist_by_id(spotify_artist_id) # Todo change credentials to somewhere else
+        result = SpotifyTierI(credentials['client_id'], credentials['client_secret']).get_artist_by_id(spotify_artist_id)
         artist = Artist.parse_obj(result)
         result = SpotifySqlite3(DB_NAME).insert_artist_to_db(artist)
         SpotifySqlite3(DB_NAME).insert_images_to_db(artist)
